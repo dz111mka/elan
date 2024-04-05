@@ -1,4 +1,16 @@
-bot.name:
-  elanplusbot
-bot.token:
-  6576821364:AAE_DjaGkvh3xsOlHh_Sl3UEd4pBm5LXXE8
+bot:
+  name: elanplusbot
+  token: 6576821364:AAE_DjaGkvh3xsOlHh_Sl3UEd4pBm5LXXE8
+spring:
+  datasource:
+    username: postgres
+    password: 321678
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/elan
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @Data
-@PropertySource("application.yml")
+@PropertySource("classpath:application.yml")
 public class BotConfig {
     @Value("${bot.name}")
     String botName;
