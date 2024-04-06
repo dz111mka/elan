@@ -29,5 +29,28 @@ public class Person {
 
     Location location;
 
+    @Override
+    public String toString() {
+        return this.getId() + ") " + this.getFirstname() + " " + this.getLastname() + " находится " + at(this.getLocation()) + "\n";
+    }
+
+    private String at(Location location) {
+        return switch (location) {
+            case HOME -> " дома";
+            case ILL -> "на больничном";
+            case DINNER -> "на обеде";
+            case OFFICE -> "в офисе";
+            case BLANK_WORKSHOP -> "в заготовке";
+            case AUTO_WORKSHOP -> "на автоматном участке";
+            case VACUUM_WORKSHOP -> "на вакуумном участке";
+            case SHPAT_WORKSHOP -> "на шпате";
+            case QUALITY_CONTROL_DEPARTMENT -> "в ОТК";
+            case FLUSHING -> "в промывочной";
+            case LABORATORY -> "в лаборатории";
+            case LEO_KHUDYAKOV -> "у Лени Худякова";
+            case TIMONIN -> "у Тимонина";
+            case VACATION -> "в отпуске";
+        };
+    }
 }
 

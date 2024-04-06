@@ -13,5 +13,6 @@ public enum Location {
     FLUSHING,
     LABORATORY,
     LEO_KHUDYAKOV,
-    TIMONIN
+    TIMONIN,
+    VACATION
 }

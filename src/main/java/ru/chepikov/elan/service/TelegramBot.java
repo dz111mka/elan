@@ -43,6 +43,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/register":
                     registerUser(update.getMessage());
                     break;
+                case "/checkEmployee":
+                    checkPerson(chatId);
+                    break;
                 default:
                     sendMessage(chatId, "Sorry, command was not recognized");
             }
@@ -65,8 +68,17 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-
+            log.warn("Сообщение не отправлено");
         }
+    }
+
+    private void checkPerson(long chatId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Person person : personRepository.findAll()) {
+            /*String input = person.getId() + ") " + person.getFirstname() + " " + person.getLastname() + " находится в " + person.getLocation() + "\n";*/
+            stringBuilder.append(person);
+        }
+        sendMessage(chatId, stringBuilder.toString());
     }
 
     private void register(long chatId) {
@@ -103,20 +115,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void registerUser(Message message) {
-
         Long chatId = message.getChatId();
         Chat chat = message.getChat();
-
         Person person = new Person();
         person.setId(chatId);
         person.setFirstname(chat.getFirstName());
         person.setLastname(chat.getLastName());
         person.setUsername(chat.getUserName());
         person.setLocation(Location.HOME);
-
         personRepository.save(person);
-        log.info("User: " + person + " was created");
-
+        log.info("Пользователь: " + person + " был зарегестрирован");
     }
 
     @Override
