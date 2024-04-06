@@ -10,13 +10,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long name;
+    Long id;
+
+    String firstname;
+
+    String lastname;
+
+    String username;
 
     String phone;
 

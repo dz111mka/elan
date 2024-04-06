@@ -12,5 +12,6 @@ public enum Location {
     QUALITY_CONTROL_DEPARTMENT,
     FLUSHING,
     LABORATORY,
-    LEO_KHUDYAKOV
+    LEO_KHUDYAKOV,
+    TIMONIN
 }
