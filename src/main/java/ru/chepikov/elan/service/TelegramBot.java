@@ -43,7 +43,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "начальное сообщение"));
         listOfCommands.add(new BotCommand("/register", "регистрация"));
-        listOfCommands.add(new BotCommand("/checkEmployee", "Вывести всех сотрудников"));
+        listOfCommands.add(new BotCommand("/checkemployee", "Вывести всех сотрудников"));
         listOfCommands.add(new BotCommand("/edit", "Добавить/изменить данные"));
         listOfCommands.add(new BotCommand("/help", "инфо пользования"));
 
@@ -67,7 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/register":
                     registerUser(update.getMessage());
                     break;
-                case "/checkEmployee":
+                case "/checkemployee":
                     checkPerson(chatId);
                     break;
                 case "/edit":
@@ -103,7 +103,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         StringBuilder stringBuilder = new StringBuilder();
         for (Person person : personRepository.findAll()) {
             /*String input = person.getId() + ") " + person.getFirstname() + " " + person.getLastname() + " находится в " + person.getLocation() + "\n";*/
-            stringBuilder.append(person);
+            stringBuilder.append(person).append("\n");
         }
         sendMessage(chatId, stringBuilder.toString());
     }
@@ -125,14 +125,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         InlineKeyboardButton lastNameButton = new InlineKeyboardButton();
         InlineKeyboardButton phoneButton = new InlineKeyboardButton();
         InlineKeyboardButton birthdayButton = new InlineKeyboardButton();
+
         firstNameButton.setText("Имя");
-        firstNameButton.setCallbackData(YES_BUTTON);
+        firstNameButton.setCallbackData("FIRSTNAME_BUTTON");
         lastNameButton.setText("Фамилия");
-        lastNameButton.setCallbackData(YES_BUTTON);
+        lastNameButton.setCallbackData("LASTNAME_BUTTON");
         phoneButton.setText("Телефон");
-        phoneButton.setCallbackData(YES_BUTTON);
+        phoneButton.setCallbackData("PHONE_BUTTON");
         birthdayButton.setText("День рождения");
-        birthdayButton.setCallbackData(YES_BUTTON);
+        birthdayButton.setCallbackData("BIRTHDAY_BUTTON");
 
         rowInLine.add(firstNameButton);
         rowInLine.add(lastNameButton);

@@ -3,6 +3,7 @@ package ru.chepikov.elan.config;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import ru.chepikov.elan.service.TelegramBot;
 
 @Component
 @RequiredArgsConstructor
+@Log4j
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class BotInitializer {
 
@@ -25,7 +27,7 @@ public class BotInitializer {
             telegramBotsApi.registerBot(bot);
         }
         catch (TelegramApiException e) {
-            //log.error("Error occurred: " + e.getMessage());
+            log.error("Error occurred: " + e.getMessage());
         }
     }
 }
