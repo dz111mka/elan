@@ -6,5 +6,6 @@ import ru.chepikov.elan.entity.Person;
 
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
+    Person findByUsername(String username);
 
 }

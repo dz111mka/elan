@@ -1,13 +1,11 @@
 
 package ru.chepikov.elan.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 
 @Entity
@@ -22,7 +20,7 @@ public class Person {
     String firstname;
 
     String lastname;
-
+    @Column(unique = true)
     String username;
 
     String phone;
@@ -31,7 +29,15 @@ public class Person {
 
     @Override
     public String toString() {
-        return this.getId() + ") " + this.getFirstname() + " " + this.getLastname() + " находится " + at(this.getLocation()) + "\n";
+        return this.getId() + ") "
+                + this.getFirstname()
+                + " "
+                + this.getLastname()
+                + " находится "
+                + at(this.getLocation())
+                + " телефон для связи "
+                + this.getPhone()
+                +  "\n";
     }
 
     private String at(Location location) {

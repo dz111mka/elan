@@ -6,21 +6,28 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.chepikov.elan.config.BotConfig;
 import ru.chepikov.elan.entity.Location;
 import ru.chepikov.elan.entity.Person;
 import ru.chepikov.elan.repository.PersonRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Component
 @Log4j
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     static final String YES_BUTTON = "YES_BUTTON";
@@ -29,6 +36,23 @@ public class TelegramBot extends TelegramLongPollingBot {
     BotConfig config;
 
     PersonRepository personRepository;
+
+    public TelegramBot(BotConfig config, PersonRepository personRepository) {
+        this.config = config;
+        this.personRepository = personRepository;
+        List<BotCommand> listOfCommands = new ArrayList<>();
+        listOfCommands.add(new BotCommand("/start", "начальное сообщение"));
+        listOfCommands.add(new BotCommand("/register", "регистрация"));
+        listOfCommands.add(new BotCommand("/checkEmployee", "Вывести всех сотрудников"));
+        listOfCommands.add(new BotCommand("/edit", "Добавить/изменить данные"));
+        listOfCommands.add(new BotCommand("/help", "инфо пользования"));
+
+        try {
+            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+        } catch (TelegramApiException e) {
+            log.error("Error setting bot's command list: " + e.getMessage());
+        }
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -45,6 +69,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case "/checkEmployee":
                     checkPerson(chatId);
+                    break;
+                case "/edit":
+                    updatePerson(chatId, update.getMessage().getChat().getUserName());
                     break;
                 default:
                     sendMessage(chatId, "Sorry, command was not recognized");
@@ -81,6 +108,49 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage(chatId, stringBuilder.toString());
     }
 
+    private void updatePerson(long chatId, String username) {
+        Person person = personRepository.findByUsername(username);
+        String personInfo = "Имя: " + person.getFirstname() + "\n" +
+                "Фамилия: " + person.getLastname() + "\n" +
+                "телефон: " + person.getPhone() + "\n" +
+                "дата рождения: " + "null" + "\n";
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(personInfo + " \n" + "Что ты хочешь изменить");
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        InlineKeyboardButton firstNameButton = new InlineKeyboardButton();
+        InlineKeyboardButton lastNameButton = new InlineKeyboardButton();
+        InlineKeyboardButton phoneButton = new InlineKeyboardButton();
+        InlineKeyboardButton birthdayButton = new InlineKeyboardButton();
+        firstNameButton.setText("Имя");
+        firstNameButton.setCallbackData(YES_BUTTON);
+        lastNameButton.setText("Фамилия");
+        lastNameButton.setCallbackData(YES_BUTTON);
+        phoneButton.setText("Телефон");
+        phoneButton.setCallbackData(YES_BUTTON);
+        birthdayButton.setText("День рождения");
+        birthdayButton.setCallbackData(YES_BUTTON);
+
+        rowInLine.add(firstNameButton);
+        rowInLine.add(lastNameButton);
+        rowInLine.add(phoneButton);
+        rowInLine.add(birthdayButton);
+
+        rowsInLine.add(rowInLine);
+
+        keyboardMarkup.setKeyboard(rowsInLine);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void register(long chatId) {
         /*SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -115,6 +185,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void registerUser(Message message) {
+        //TODO доделать условия проверки на наличие зарегестрирован ли уже пользователь
         Long chatId = message.getChatId();
         Chat chat = message.getChat();
         Person person = new Person();
@@ -124,7 +195,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         person.setUsername(chat.getUserName());
         person.setLocation(Location.HOME);
         personRepository.save(person);
-        log.info("Пользователь: " + person + " был зарегестрирован");
+        log.info("Пользователь: " + person.getUsername() + " был зарегестрирован");
     }
 
     @Override
