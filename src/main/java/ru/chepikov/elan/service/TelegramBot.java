@@ -187,14 +187,16 @@ public class TelegramBot extends TelegramLongPollingBot {
                 createInlineKeyboardButton("Заготовка \uD83D\uDEE0\uFE0F", "BLANK_WORKSHOP_BUTTON"),
                 createInlineKeyboardButton("Автоматный участок \uD83D\uDEE0\uFE0F", "AUTO_WORKSHOP_BUTTON"),
                 createInlineKeyboardButton("Вакуумный участок \uD83D\uDEE0\uFE0F", "VACUUM_WORKSHOP_BUTTON"),
-                createInlineKeyboardButton("Шпат \uD83D\uDEE0\uFE0F", "SHPAT_WORKSHOP_BUTTON")
+                createInlineKeyboardButton("Шпат \uD83D\uDEE0\uFE0F", "SHPAT_WORKSHOP_BUTTON"),
+                createInlineKeyboardButton("ОТК \uD83D\uDC67", "QUALITY_CONTROL_DEPARTMENT_BUTTON")
         };
 
         InlineKeyboardButton[] buttonsRow3 = {
-                createInlineKeyboardButton("ОТК \uD83D\uDC67", "QUALITY_CONTROL_DEPARTMENT_BUTTON"),
                 createInlineKeyboardButton("Промывочная \uD83D\uDC67", "FLUSHING_BUTTON"),
                 createInlineKeyboardButton("Лаборатория \uD83E\uDD7C", "LABORATORY_BUTTON"),
-                createInlineKeyboardButton("Лаборатория Лени Худякова \uD83E\uDD7C", "LEO_KHUDYAKOV_BUTTON")
+                createInlineKeyboardButton("Лаборатория Лени Худякова \uD83E\uDD7C", "LEO_KHUDYAKOV_BUTTON"),
+                createInlineKeyboardButton("У Тимонина \uD83D\uDEAC", "TIMONIN_BUTTON"),
+                createInlineKeyboardButton("Отпуск \uD83D\uDEAC", "VACATION_BUTTON")
         };
 
         List<InlineKeyboardButton> rowInLine1 = Arrays.asList(buttonsRow1);
