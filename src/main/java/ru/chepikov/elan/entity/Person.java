@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Entity
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     String firstname;
@@ -29,7 +27,7 @@ public class Person {
 
     Location location;
 
-    LocalDateTime birthday;
+    LocalDate birthday;
 
     @Override
     public String toString() {

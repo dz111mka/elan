@@ -1,8 +1,10 @@
 package ru.chepikov.elan.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -21,6 +23,7 @@ import ru.chepikov.elan.entity.Location;
 import ru.chepikov.elan.entity.Person;
 import ru.chepikov.elan.repository.PersonRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/checkemployee" -> checkPerson(chatId);
                 case "/edit" -> updatePerson(chatId, update.getMessage().getChat().getUserName());
                 case "/editstatus" -> editStatus(chatId);
+                case "/birthday" -> sendBirthdayMessagesToAll();
                 default -> sendMessage(chatId, "Sorry, command was not recognized");
             }
         } else if (update.hasCallbackQuery()) {
@@ -316,6 +320,39 @@ public class TelegramBot extends TelegramLongPollingBot {
         person.setLocation(Location.HOME);
         personRepository.save(person);
         log.info("Пользователь: " + person.getUsername() + " был зарегестрирован");
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // Каждый день в полночь
+    public void sendBirthdayMessagesToAll() {
+        LocalDate today = LocalDate.now();
+        int dayOfToday = today.getDayOfMonth();
+        int monthOfToday = today.getMonthValue();
+
+        Iterable<Person> personList = personRepository.findAll();
+        for (Person person : personList) {
+            LocalDate birthday = person.getBirthday();
+            if (birthday != null) {
+                int dayOfBirthday = birthday.getDayOfMonth();
+                int monthOfBirthday = birthday.getMonthValue();
+
+                if (dayOfToday == dayOfBirthday && monthOfToday == monthOfBirthday) {
+                    prepareAndSendMessage(person.getId(), "Сегодня День Рождения у " + person.getFirstname());
+                }
+            }
+        }
+    }
+
+    private void prepareAndSendMessage(long chatId, String textToSend) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(textToSend);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.warn("Не удалось отправить сообщение");
+        }
+
     }
 
     @Override
